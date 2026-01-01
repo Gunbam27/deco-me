@@ -26,14 +26,12 @@ export default function CharacterList() {
 
       <section className="border p-4">
         캐릭터 미리보기 영역
-        {characters.map((a, i) => {
+        {characters.map((character) => {
           return (
-            <div key={a.id}>
-              <p>{a.parts.face}</p>
-              <p>{a.parts.hair}</p>
-              <p>{a.parts.eyes}</p>
-              <p>{a.parts.mouth}</p>
-              <p>{a.parts.background}</p>
+            <div key={character.id}>
+              <p>{character.parts.animal}</p>
+              <p>{character.parts.accessory}</p>
+              <p>{character.parts.background}</p>
             </div>
           );
         })}
