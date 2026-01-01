@@ -1,8 +1,7 @@
+export type AnimalType = (typeof ANIMALS)[number]['type'];
+
 export type CharacterParts = {
-  face: string;
-  hair: string;
-  eyes: string;
-  mouth: string;
+  animal: AnimalType;
   accessory?: string;
   background?: string;
 };
@@ -15,3 +14,30 @@ export type Character = {
   parts: CharacterParts; // 캐릭터 구성 요소
   createdAt: string;
 };
+
+export const ANIMALS = [
+  {
+    type: 'capybara',
+    id: 'char-1',
+    src: '/character/Capybara.svg',
+    name: '카피바라',
+  },
+  {
+    type: 'cat',
+    id: 'char-2',
+    src: '/character/Cat.svg',
+    name: '고양이',
+  },
+  {
+    type: 'whale',
+    id: 'char-3',
+    src: '/character/Whale.svg',
+    name: '고래',
+  },
+  {
+    type: 'wolf',
+    id: 'char-4',
+    src: '/character/Wolf.svg',
+    name: '늑대',
+  },
+];

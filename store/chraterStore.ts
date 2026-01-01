@@ -4,15 +4,16 @@ import { create } from 'zustand';
 interface CharacterState {
   parts: CharacterParts;
   setPart: (key: keyof CharacterParts, value: string) => void;
+  setAllparts: (parts: CharacterParts) => void;
+
   reset: () => void;
 }
 
 export const useCharacterStore = create<CharacterState>((set) => ({
   parts: {
-    face: 'default',
-    hair: 'defalut',
-    eyes: 'defalut',
-    mouth: 'default',
+    animal: 'capybara',
+    accessory: 'default',
+    background: 'default',
   },
 
   setPart: (key, value) =>
@@ -22,14 +23,13 @@ export const useCharacterStore = create<CharacterState>((set) => ({
         [key]: value,
       },
     })),
-
+  setAllparts: (parts) => set({ parts }),
   reset: () =>
     set({
       parts: {
-        face: 'default',
-        hair: 'defalut',
-        eyes: 'defalut',
-        mouth: 'default',
+        animal: 'capybara',
+        accessory: 'default',
+        background: 'default',
       },
     }),
 }));
