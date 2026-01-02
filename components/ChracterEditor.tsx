@@ -17,7 +17,7 @@ export default function CharacterEditor(props: { mode: EditorMode }) {
   }
 
   return (
-    <main className="p-6 space-y-4">
+    <main>
       <ChracterSelectCanvas />
 
       {props.mode !== 'readonly' && (
