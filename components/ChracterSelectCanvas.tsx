@@ -1,30 +1,65 @@
 'use client';
-import { ANIMALS } from '@/types/character';
-import Image from 'next/image';
-import { useState } from 'react';
+import { ANIMALS, BACKGROUND } from '@/types/character';
+import { useEffect, useRef, useState } from 'react';
 import { CharacterThumbnailSlider } from './ChracterThumbnailSlider';
 import { useCharacterStore } from '@/store/chraterStore';
+import Image from 'next/image';
 
 export function ChracterSelectCanvas() {
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
-  const tab = ['성격', '악세사리', '배경'];
+  const tab = ['성격', '악세사리'];
   const [selectedTab, setSelectedTab] = useState(0);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const characterImageRef = useRef<HTMLImageElement | null>(null);
+  const SIZE = 640;
+  const SCALE = 0.6;
 
   function onClickTab(selectedTab: number) {
     setSelectedTab(selectedTab);
   }
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+
+    if (!canvas) return;
+
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    ctxRef.current = canvas.getContext('2d');
+    const ctx = ctxRef.current;
+
+    characterImageRef.current = new window.Image();
+    const image = characterImageRef.current;
+    if (!ctx || !image) return;
+
+    image.onload = () => {
+      const w = SIZE * SCALE;
+      const h = SIZE * SCALE;
+      const x = (SIZE - w) / 2;
+      const y = (SIZE - h) / 2;
+      ctx.drawImage(image, x, y, w, h);
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    ctxRef.current = canvas.getContext('2d');
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, SIZE, SIZE);
+
+    if (!characterImageRef.current) return;
+    characterImageRef.current.src = `${animal?.src || ANIMALS[0].src}`;
+  }, [animal]);
+
   return (
-    <section>
-      <div className="w-[260px] h-[260px] flex items-center justify-center rounded-xl bg-gray-100">
-        <Image
-          src={animal?.src || ''}
-          alt={animal?.name || '이미지'}
-          width={220}
-          height={220}
-          priority
-        />
+    <section className="mx-auto max-w-[640px]">
+      <div className="canvas_wrap">
+        <canvas ref={canvasRef} className="w-full"></canvas>
       </div>
       <div className="w-full flex align-center">
         {tab.map((tab, index) => (
