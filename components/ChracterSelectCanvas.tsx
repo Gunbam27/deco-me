@@ -1,5 +1,5 @@
 'use client';
-import { ANIMALS, BACKGROUND } from '@/types/character';
+import { ACCESSORY, ANIMALS, BACKGROUND } from '@/types/character';
 import { useEffect, useRef, useState } from 'react';
 import { CharacterThumbnailSlider } from './ChracterThumbnailSlider';
 import { useCharacterStore } from '@/store/chraterStore';
@@ -7,12 +7,15 @@ import Image from 'next/image';
 
 export function ChracterSelectCanvas() {
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
+  const selectedAccessory = useCharacterStore((s) => s.parts.accessories);
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
   const tab = ['성격', '악세사리'];
   const [selectedTab, setSelectedTab] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const characterImageRef = useRef<HTMLImageElement | null>(null);
+  const accesorryImageRef = useRef<HTMLImageElement | null>(null);
+
   const SIZE = 640;
   const SCALE = 0.6;
 
@@ -20,41 +23,68 @@ export function ChracterSelectCanvas() {
     setSelectedTab(selectedTab);
   }
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
+  function drawCharacter(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+    const w = SIZE * SCALE;
+    const h = SIZE * SCALE;
+    const x = (SIZE - w) / 2;
+    const y = (SIZE - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+  }
 
-    if (!canvas) return;
+  function drawAccessory(
+    ctx: CanvasRenderingContext2D,
+    acce: { src: string; x: number; y: number; scale: number },
+  ) {
+    const img = new window.Image();
+    img.src = acce.src;
 
-    canvas.width = SIZE;
-    canvas.height = SIZE;
-    ctxRef.current = canvas.getContext('2d');
-    const ctx = ctxRef.current;
-
-    characterImageRef.current = new window.Image();
-    const image = characterImageRef.current;
-    if (!ctx || !image) return;
-
-    image.onload = () => {
-      const w = SIZE * SCALE;
-      const h = SIZE * SCALE;
-      const x = (SIZE - w) / 2;
-      const y = (SIZE - h) / 2;
-      ctx.drawImage(image, x, y, w, h);
+    img.onload = () => {
+      ctx.drawImage(
+        img,
+        acce.x,
+        acce.y,
+        img.width * acce.scale,
+        img.height * acce.scale,
+      );
     };
-  }, []);
+  }
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    ctxRef.current = canvas.getContext('2d');
+  function drawScene() {
     const ctx = ctxRef.current;
     if (!ctx) return;
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
+    if (characterImageRef.current) {
+      drawCharacter(ctx, characterImageRef.current);
+    }
+
+    selectedAccessory.forEach((acce) => {
+      drawAccessory(ctx, acce);
+    });
+  }
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    ctxRef.current = canvas.getContext('2d');
+
+    characterImageRef.current = new window.Image();
+  }, []);
+
+  useEffect(() => {
     if (!characterImageRef.current) return;
-    characterImageRef.current.src = `${animal?.src || ANIMALS[0].src}`;
+
+    characterImageRef.current.src = animal?.src || ANIMALS[0].src;
+    characterImageRef.current.onload = drawScene;
   }, [animal]);
+
+  useEffect(() => {
+    drawScene();
+  }, [selectedAccessory]);
 
   return (
     <section className="mx-auto max-w-[640px]">
