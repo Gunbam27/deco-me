@@ -1,13 +1,16 @@
 'use client';
 import { ACCESSORY, ANIMALS, BACKGROUND } from '@/types/character';
 import { useEffect, useRef, useState } from 'react';
-import { CharacterThumbnailSlider } from './ChracterThumbnailSlider';
+import { ThumbnailSlider } from './ChracterThumbnailSlider';
 import { useCharacterStore } from '@/store/chraterStore';
 import Image from 'next/image';
+import { createAccessoryFromPreset } from '@/util/accessory';
 
 export function ChracterSelectCanvas() {
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
   const selectedAccessory = useCharacterStore((s) => s.parts.accessories);
+  const setPart = useCharacterStore((s) => s.setPart);
+  const addAccessory = useCharacterStore((s) => s.addAccessory);
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
   const tab = ['성격', '악세사리'];
   const [selectedTab, setSelectedTab] = useState(0);
@@ -102,7 +105,30 @@ export function ChracterSelectCanvas() {
           </div>
         ))}
       </div>
-      {selectedTab === 0 ? <CharacterThumbnailSlider /> : null}
+      {selectedTab === 0 ? (
+        <ThumbnailSlider
+          items={ANIMALS}
+          visibleCount={4}
+          isSelected={(animal) => animal.type === selectedAnimal}
+          onSelect={(animal) => setPart('animal', animal.type)}
+          renderItem={(animal) => (
+            <Image src={animal.src} alt={animal.name} width={72} height={72} />
+          )}
+        />
+      ) : null}
+      {selectedTab === 1 ? (
+        <ThumbnailSlider
+          items={ACCESSORY}
+          visibleCount={5}
+          isSelected={(acce) =>
+            selectedAccessory.some((a) => a.src === acce.src)
+          }
+          onSelect={(acce) => addAccessory(createAccessoryFromPreset(acce))}
+          renderItem={(animal) => (
+            <Image src={animal.src} alt={animal.name} width={72} height={72} />
+          )}
+        />
+      ) : null}
     </section>
   );
 }
