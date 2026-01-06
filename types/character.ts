@@ -2,7 +2,7 @@ export type AnimalType = (typeof ANIMALS)[number]['type'];
 
 export type CharacterParts = {
   animal: AnimalType;
-  accessory?: string;
+  accessories: Accessory[];
   background?: string;
 };
 
@@ -13,6 +13,14 @@ export type Character = {
   isSelf: boolean; // 내가 만든 내 캐릭터인지 여부
   parts: CharacterParts; // 캐릭터 구성 요소
   createdAt: string;
+};
+
+export type Accessory = {
+  id: string; // 캔버스 객체 id
+  src: string;
+  x: number;
+  y: number;
+  scale: number;
 };
 
 export const ANIMALS = [
@@ -92,3 +100,116 @@ export const BACKGROUND = [
     name: '방',
   },
 ];
+
+export const ACCESSORY = [
+  {
+    type: 'face',
+    id: 'acce-1',
+    src: '/acce/AngryMark.svg',
+    name: '빠직마크',
+  },
+  {
+    type: 'face',
+    id: 'acce-2',
+    src: '/acce/EyebrowL.svg',
+    name: '화난눈썹 왼쪽',
+  },
+  {
+    type: 'face',
+    id: 'acce-3',
+    src: '/acce/EyebrowR.svg',
+    name: '화난눈썹 오른쪽',
+  },
+  {
+    type: 'face',
+    id: 'acce-4',
+    src: '/acce/FakeEyeL.svg',
+    name: '가짜눈 왼쪽',
+  },
+  {
+    type: 'face',
+    id: 'acce-5',
+    src: '/acce/FakeEyeR.svg',
+    name: '가짜눈 오른쪽',
+  },
+  {
+    type: 'face',
+    id: 'acce-6',
+    src: '/acce/UpsetEyebrow.svg',
+    name: '미간 주름',
+  },
+  {
+    type: 'face',
+    id: 'acce-7',
+    src: '/acce/TearL.svg',
+    name: '눈물 왼쪽',
+  },
+  {
+    type: 'face',
+    id: 'acce-8',
+    src: '/acce/TearR.svg',
+    name: '눈물 오른쪽',
+  },
+  {
+    type: 'clothes',
+    id: 'acce-9',
+    src: '/acce/Flower.svg',
+    name: '꽃',
+  },
+  {
+    type: 'clothes',
+    id: 'acce-10',
+    src: '/acce/Tie.svg',
+    name: '넥타이',
+  },
+  {
+    type: 'hair',
+    id: 'acce-11',
+    src: '/acce/Hair1.svg',
+    name: '앞머리',
+  },
+  {
+    type: 'hair',
+    id: 'acce-12',
+    src: '/acce/Hair1.svg',
+    name: '앞머리',
+  },
+  {
+    type: 'hair',
+    id: 'acce-13',
+    src: '/acce/Hair2L.svg',
+    name: '양갈래 왼쪽',
+  },
+  {
+    type: 'hair',
+    id: 'acce-14',
+    src: '/acce/Hair2R.svg',
+    name: '양갈래 오른쪽',
+  },
+  {
+    type: 'hair',
+    id: 'acce-15',
+    src: '/acce/Hair3.svg',
+    name: '곱슬긴머리',
+  },
+  {
+    type: 'hair',
+    id: 'acce-16',
+    src: '/acce/Hair4.svg',
+    name: '똥머리',
+  },
+  {
+    type: 'hair',
+    id: 'acce-17',
+    src: '/acce/Hair5.svg',
+    name: '짧은머리',
+  },
+  {
+    type: 'hair',
+    id: 'acce-18',
+    src: '/acce/Hair6.svg',
+    name: '덮은머리',
+  },
+];
+
+export type AccessoryPreset = (typeof ACCESSORY)[number];
