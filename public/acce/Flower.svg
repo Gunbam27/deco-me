@@ -1,0 +1,11 @@
+<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="10.0571" cy="4.81973" rx="3.11865" ry="4.81973" fill="#FFC9C9"/>
+<ellipse cx="4.81973" cy="10.1912" rx="3.11865" ry="4.81973" transform="rotate(-90 4.81973 10.1912)" fill="#FFC9C9"/>
+<ellipse cx="5.61329" cy="6.7474" rx="3.11865" ry="4.81973" transform="rotate(-45 5.61329 6.7474)" fill="#FFC9C9"/>
+<ellipse cx="3.11865" cy="4.81973" rx="3.11865" ry="4.81973" transform="matrix(1 0 0 -1 6.93848 20.1342)" fill="#FFC9C9"/>
+<ellipse cx="3.11865" cy="4.81973" rx="3.11865" ry="4.81973" transform="matrix(0.707107 0.707107 0.707107 -0.707107 0 14.5897)" fill="#FFC9C9"/>
+<ellipse cx="3.11865" cy="4.81973" rx="3.11865" ry="4.81973" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 20 13.3098)" fill="#FFC9C9"/>
+<ellipse cx="3.11865" cy="4.81973" rx="3.11865" ry="4.81973" transform="matrix(-0.707107 -0.707107 -0.707107 0.707107 20 5.54456)" fill="#FFC9C9"/>
+<ellipse cx="14.3867" cy="13.3869" rx="3.11865" ry="4.81973" transform="rotate(135 14.3867 13.3869)" fill="#FFC9C9"/>
+<circle cx="10" cy="10" r="4" fill="#FFF8E0"/>
+</svg>
