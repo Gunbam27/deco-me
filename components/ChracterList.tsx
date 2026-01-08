@@ -30,7 +30,6 @@ export default function CharacterList() {
           return (
             <div key={character.id}>
               <p>{character.parts.animal}</p>
-              <p>{character.parts.accessory}</p>
               <p>{character.parts.background}</p>
             </div>
           );
