@@ -35,13 +35,46 @@ export function ChracterSelectCanvas() {
   return (
     <section className="mx-auto max-w-[640px]">
       <div className="canvas_wrap">
-        <Stage width={SIZE} height={SIZE}>
+        <Stage
+          width={SIZE}
+          height={SIZE}
+          onMouseDown={(e) => {
+            console.log(
+              e.target.getClassName(),
+              e.target.name(),
+              e.target.getParent()?.name(),
+            );
+            const target = e.target;
+
+            const isAccessoryOrTransformer =
+              target.hasName('accessory') ||
+              target.findAncestor('.accessory') ||
+              target.hasName('transformer') ||
+              target.findAncestor('.transformer');
+
+            if (!isAccessoryOrTransformer) {
+              setSelectedId(null);
+              transformerRef.current?.nodes([]);
+            }
+          }}
+          onTouchStart={(e) => {
+            const clickedOnEmpty =
+              e.target === e.target.getStage() ||
+              !e.target.hasName('accessory');
+
+            if (clickedOnEmpty) {
+              setSelectedId(null);
+              transformerRef.current?.nodes([]);
+            }
+          }}
+        >
           <Layer>
             {animalImage && (
               <KonvaImage
+                listening={false}
                 image={animalImage}
                 x={(SIZE - SIZE * SCALE) / 2}
-                y={SIZE - (SIZE * SCALE) / 2}
+                y={(SIZE - SIZE * SCALE) / 2}
                 width={SIZE * SCALE}
                 height={SIZE * SCALE}
               />
@@ -56,7 +89,7 @@ export function ChracterSelectCanvas() {
                 transformerRef={transformerRef}
               />
             ))}
-            <Transformer ref={transformerRef} />
+            <Transformer name="transformer" ref={transformerRef} />
           </Layer>
         </Stage>
       </div>
@@ -86,9 +119,7 @@ export function ChracterSelectCanvas() {
         <ThumbnailSlider
           items={ACCESSORY}
           visibleCount={5}
-          isSelected={(acce) =>
-            selectedAccessory.some((a) => a.src === acce.src)
-          }
+          isSelected={(acce) => accessories.some((a) => a.src === acce.src)}
           onSelect={(acce) => addAccessory(createAccessoryFromPreset(acce))}
           renderItem={(animal) => (
             <Image src={animal.src} alt={animal.name} width={72} height={72} />

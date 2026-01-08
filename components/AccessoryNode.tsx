@@ -31,6 +31,7 @@ export function AccessoryNode({
 
   return (
     <KonvaImage
+      name="accessory"
       image={img}
       x={acce.x}
       y={acce.y}
