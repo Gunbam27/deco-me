@@ -1,6 +1,6 @@
 'use client';
 import { createCharacter } from '@/service/charactersApi';
-import { useCharacterStore } from '@/store/chraterStore';
+import { useCharacterStore } from '@/store/charaterStore';
 import { ChracterSelectCanvas } from './ChracterSelectCanvas';
 import { EditorMode } from '@/types/editormode';
 

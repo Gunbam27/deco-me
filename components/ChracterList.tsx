@@ -1,6 +1,6 @@
 'use client';
 import { getCharacterByOwnerId, getMyCharacter } from '@/service/charactersApi';
-import { useCharacterStore } from '@/store/chraterStore';
+import { useCharacterStore } from '@/store/charaterStore';
 import { Character } from '@/types/character';
 import { useEffect, useState } from 'react';
 

@@ -112,13 +112,13 @@ export const ACCESSORY = [
     type: 'face',
     id: 'acce-2',
     src: '/acce/EyebrowL.svg',
-    name: '화난눈썹 왼쪽',
+    name: '걱정눈썹 왼쪽',
   },
   {
     type: 'face',
     id: 'acce-3',
     src: '/acce/EyebrowR.svg',
-    name: '화난눈썹 오른쪽',
+    name: '걱정눈썹 오른쪽',
   },
   {
     type: 'face',

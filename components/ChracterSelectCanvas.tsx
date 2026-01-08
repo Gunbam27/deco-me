@@ -1,8 +1,8 @@
 'use client';
 import { ACCESSORY, ANIMALS, BACKGROUND } from '@/types/character';
 import { useEffect, useRef, useState } from 'react';
-import { ThumbnailSlider } from './ChracterThumbnailSlider';
-import { useCharacterStore } from '@/store/chraterStore';
+import { ThumbnailSlider } from './ThumbnailSlider';
+import { useCharacterStore } from '@/store/charaterStore';
 import Image from 'next/image';
 import { createAccessoryFromPreset } from '@/util/accessory';
 import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
@@ -17,6 +17,7 @@ export function ChracterSelectCanvas() {
   const accessories = useCharacterStore((s) => s.parts.accessories);
   const setPart = useCharacterStore((s) => s.setPart);
   const addAccessory = useCharacterStore((s) => s.addAccessory);
+  const removeAccessory = useCharacterStore((s) => s.removeAccessory);
   const updateAccessory = useCharacterStore((s) => s.updateAccessory);
 
   const tab = ['성격', '악세사리'];
@@ -120,10 +121,17 @@ export function ChracterSelectCanvas() {
           items={ACCESSORY}
           visibleCount={5}
           isSelected={(acce) => accessories.some((a) => a.src === acce.src)}
-          onSelect={(acce) => addAccessory(createAccessoryFromPreset(acce))}
+          onSelect={(acce) => addAccessory(acce)}
           renderItem={(animal) => (
             <Image src={animal.src} alt={animal.name} width={72} height={72} />
           )}
+          onRemove={(acce) => {
+            removeAccessory(acce.id); // 스토어에서 제거
+            if (selectedId === acce.id) {
+              setSelectedId(null);
+              transformerRef.current?.nodes([]);
+            }
+          }}
         />
       ) : null}
     </section>
