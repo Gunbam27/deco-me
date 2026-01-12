@@ -8,18 +8,24 @@ import { createAccessoryFromPreset } from '@/util/accessory';
 import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
 import { AccessoryNode } from './AccessoryNode';
 import useImage from 'use-image';
+import { EditorMode } from '@/types/editormode';
+import { createCharacter } from '@/service/charactersApi';
 
-export function ChracterSelectCanvas() {
-  const SIZE = 640;
-  const SCALE = 0.6;
+export function ChracterSelectCanvas(props: { mode: EditorMode }) {
+  //상수
+  const MAX_SIZE = 640;
+  const CHARACTER_RATIO = 0.9;
 
+  //스토어 관련
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
   const accessories = useCharacterStore((s) => s.parts.accessories);
+  const parts = useCharacterStore((s) => s.parts);
   const setPart = useCharacterStore((s) => s.setPart);
   const addAccessory = useCharacterStore((s) => s.addAccessory);
   const removeAccessory = useCharacterStore((s) => s.removeAccessory);
   const updateAccessory = useCharacterStore((s) => s.updateAccessory);
 
+  //탭
   const tab = ['성격', '악세사리'];
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -29,73 +35,97 @@ export function ChracterSelectCanvas() {
   const transformerRef = useRef<any>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  //반응형 스테이지 사이즈 계산
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [stageSize, setStageSize] = useState(MAX_SIZE);
+  const characterSize = stageSize * CHARACTER_RATIO;
+  const offset = (stageSize - characterSize) / 2;
+
   function onClickTab(selectedTab: number) {
     setSelectedTab(selectedTab);
   }
 
+  async function handleSave() {
+    await createCharacter({
+      ownerId: 'yejin',
+      createdBy: 'yejin',
+      isSelf: true,
+      parts,
+    });
+  }
+
+  useEffect(() => {
+    function resize() {
+      if (!containerRef.current) return;
+      const width = containerRef.current.offsetWidth;
+      setStageSize(Math.min(width, MAX_SIZE));
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+
   return (
     <section className="mx-auto max-w-[640px] p-4 space-y-4">
       {/* Canvas Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-4">
-        <Stage
-          width={SIZE}
-          height={SIZE}
-          onMouseDown={(e) => {
-            console.log(
-              e.target.getClassName(),
-              e.target.name(),
-              e.target.getParent()?.name(),
-            );
-            const target = e.target;
+      <div ref={containerRef} className="w-full flex justify-center">
+        <div className="bg-white rounded-2xl shadow-lg  m-4">
+          <Stage
+            width={stageSize}
+            height={stageSize}
+            onMouseDown={(e) => {
+              const target = e.target;
 
-            const isAccessoryOrTransformer =
-              target.hasName('accessory') ||
-              target.findAncestor('.accessory') ||
-              target.hasName('transformer') ||
-              target.findAncestor('.transformer');
+              const isAccessoryOrTransformer =
+                target.hasName('accessory') ||
+                target.findAncestor('.accessory') ||
+                target.hasName('transformer') ||
+                target.findAncestor('.transformer');
 
-            if (!isAccessoryOrTransformer) {
-              setSelectedId(null);
-              transformerRef.current?.nodes([]);
-            }
-          }}
-          onTouchStart={(e) => {
-            const clickedOnEmpty =
-              e.target === e.target.getStage() ||
-              !e.target.hasName('accessory');
+              if (!isAccessoryOrTransformer) {
+                setSelectedId(null);
+                transformerRef.current?.nodes([]);
+              }
+            }}
+            onTouchStart={(e) => {
+              const clickedOnEmpty =
+                e.target === e.target.getStage() ||
+                !e.target.hasName('accessory');
 
-            if (clickedOnEmpty) {
-              setSelectedId(null);
-              transformerRef.current?.nodes([]);
-            }
-          }}
-        >
-          <Layer>
-            {animalImage && (
-              <KonvaImage
-                listening={false}
-                image={animalImage}
-                x={(SIZE - SIZE * SCALE) / 2}
-                y={(SIZE - SIZE * SCALE) / 2}
-                width={SIZE * SCALE}
-                height={SIZE * SCALE}
-              />
-            )}
-            {accessories.map((acce) => (
-              <AccessoryNode
-                key={acce.id}
-                acce={acce}
-                isSelected={acce.id === selectedId}
-                onSelect={() => setSelectedId(acce.id)}
-                onChange={(attrs) => updateAccessory(acce.id, attrs)}
-                transformerRef={transformerRef}
-              />
-            ))}
-            <Transformer name="transformer" ref={transformerRef} />
-          </Layer>
-        </Stage>
+              if (clickedOnEmpty) {
+                setSelectedId(null);
+                transformerRef.current?.nodes([]);
+              }
+            }}
+          >
+            <Layer>
+              {animalImage && (
+                <KonvaImage
+                  listening={false}
+                  image={animalImage}
+                  x={offset}
+                  y={offset}
+                  width={characterSize}
+                  height={characterSize}
+                />
+              )}
+              {accessories.map((acce) => (
+                <AccessoryNode
+                  key={acce.id}
+                  acce={acce}
+                  isSelected={acce.id === selectedId}
+                  onSelect={() => setSelectedId(acce.id)}
+                  onChange={(attrs) => updateAccessory(acce.id, attrs)}
+                  transformerRef={transformerRef}
+                />
+              ))}
+              <Transformer name="transformer" ref={transformerRef} />
+            </Layer>
+          </Stage>
+        </div>
       </div>
-      <div className="flex bg-pink-100 rounded-full p-1">
+      <div className="flex bg-pink-100 rounded-full p-1 shadow-lg">
         {tab.map((label, index) => {
           const active = index === selectedTab;
           return (
@@ -148,6 +178,18 @@ export function ChracterSelectCanvas() {
           }}
         />
       ) : null}
+      <div className="text-center">
+        {props.mode !== 'readonly' && (
+          <button
+            className="flex-1 py-2 w-20 rounded-full text-sm font-semibold transition
+          bg-brown-500 text-white shadow
+        "
+            onClick={handleSave}
+          >
+            저장하기
+          </button>
+        )}
+      </div>
     </section>
   );
 }

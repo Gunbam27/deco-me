@@ -1,6 +1,7 @@
 import { useCharacterStore } from '@/store/charaterStore';
 import { ACCESSORY, ANIMALS } from '@/types/character';
 import { createAccessoryFromPreset } from '@/util/accessory';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -35,8 +36,19 @@ export function ThumbnailSlider<T>({
       <button
         disabled={page === 0}
         onClick={() => setPage((p) => Math.max(0, p - 1))}
+        className="
+    flex items-center justify-center
+    w-9 h-9
+    rounded-full
+    bg-white shadow
+    text-brown-500
+    hover:bg-pink-100
+    disabled:opacity-30
+    disabled:cursor-not-allowed
+    transition
+  "
       >
-        ◀
+        <ChevronLeft size={20} strokeWidth={3} />
       </button>
 
       <div
@@ -76,7 +88,7 @@ export function ThumbnailSlider<T>({
                     onRemove(item);
                   }}
                 >
-                  ×
+                  <X size={16} strokeWidth={3} />
                 </button>
               )}
             </div>
@@ -93,9 +105,19 @@ export function ThumbnailSlider<T>({
       <button
         disabled={page === maxPage}
         onClick={() => setPage((p) => Math.min(maxPage, p + 1))}
-        className="disabled:opacity-30"
+        className="
+    flex items-center justify-center
+    w-9 h-9
+    rounded-full
+    bg-white shadow
+    text-brown-500
+    hover:bg-pink-100
+    disabled:opacity-30
+    disabled:cursor-not-allowed
+    transition
+  "
       >
-        ▶
+        <ChevronRight size={20} strokeWidth={3} />
       </button>
     </div>
   );

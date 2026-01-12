@@ -24,8 +24,8 @@ export function AppBar() {
         <Image
           src="/logo.png" // 🔁 네 로고 경로로 변경
           alt="Deco Me"
-          width={96}
-          height={24}
+          width={110}
+          height={40}
           priority
         />
       </div>
