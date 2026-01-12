@@ -6,7 +6,8 @@ import { useState } from 'react';
 
 interface ThumbnailSliderProps<T> {
   items: T[];
-  visibleCount?: number; // 한 화면에 몇 개
+  cols?: number;
+  rows?: number;
   renderItem: (item: T, isSelected: boolean) => React.ReactNode;
   isSelected: (item: T) => boolean;
   onSelect: (item: T) => void;
@@ -15,7 +16,8 @@ interface ThumbnailSliderProps<T> {
 
 export function ThumbnailSlider<T>({
   items,
-  visibleCount = 4,
+  cols = 3,
+  rows = 2,
   renderItem,
   isSelected,
   onSelect,
@@ -23,13 +25,13 @@ export function ThumbnailSlider<T>({
 }: ThumbnailSliderProps<T>) {
   const [page, setPage] = useState(0);
 
-  const maxPage = Math.ceil(items.length / visibleCount) - 1;
-  const start = page * visibleCount;
-  const visibleItems = items.slice(start, start + visibleCount);
-  const accessories = useCharacterStore((s) => s.parts.accessories);
+  const pageSize = cols * rows;
+  const maxPage = Math.ceil(items.length / pageSize) - 1;
+  const start = page * pageSize;
+  const visibleItems = items.slice(start, start + pageSize);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3 w-full">
       <button
         disabled={page === 0}
         onClick={() => setPage((p) => Math.max(0, p - 1))}
@@ -37,14 +39,24 @@ export function ThumbnailSlider<T>({
         ◀
       </button>
 
-      <div className="flex gap-2">
+      <div
+        className="grid gap-3 w-full"
+        style={{
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+        }}
+      >
         {visibleItems.map((item, idx) => {
           const selected = isSelected(item);
 
           return (
             <div
               key={idx}
-              className={`relative border rounded ${selected ? 'border-blue-500' : 'border-transparent'}`}
+              className={`
+              relative aspect-square rounded-xl bg-white shadow-sm
+              flex items-center justify-center
+              cursor-pointer
+              ${selected ? 'ring-2 ring-[#7c3b18]' : 'ring-1 ring-pink-200'}
+            `}
               onClick={() => onSelect(item)}
             >
               {/* 썸네일 이미지 */}
@@ -53,10 +65,15 @@ export function ThumbnailSlider<T>({
               {/* X 버튼: onRemove가 있으면 렌더링 */}
               {onRemove && selected && (
                 <button
-                  className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
+                  className="
+                  absolute -top-2 -right-2
+                  w-6 h-6 rounded-full
+                  bg-red-500 text-white text-sm
+                  flex items-center justify-center
+                "
                   onClick={(e) => {
-                    e.stopPropagation(); // 부모 클릭 방지
-                    onRemove(item); // 스토어에서 제거
+                    e.stopPropagation();
+                    onRemove(item);
                   }}
                 >
                   ×
@@ -65,11 +82,18 @@ export function ThumbnailSlider<T>({
             </div>
           );
         })}
+
+        {Array.from({
+          length: cols * rows - visibleItems.length,
+        }).map((_, i) => (
+          <div key={i} className="aspect-square" />
+        ))}
       </div>
 
       <button
         disabled={page === maxPage}
         onClick={() => setPage((p) => Math.min(maxPage, p + 1))}
+        className="disabled:opacity-30"
       >
         ▶
       </button>

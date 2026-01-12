@@ -34,8 +34,9 @@ export function ChracterSelectCanvas() {
   }
 
   return (
-    <section className="mx-auto max-w-[640px]">
-      <div className="canvas_wrap">
+    <section className="mx-auto max-w-[640px] p-4 space-y-4">
+      {/* Canvas Card */}
+      <div className="bg-white rounded-2xl shadow-lg p-4">
         <Stage
           width={SIZE}
           height={SIZE}
@@ -94,36 +95,49 @@ export function ChracterSelectCanvas() {
           </Layer>
         </Stage>
       </div>
-      <div className="w-full flex align-center">
-        {tab.map((tab, index) => (
-          <div
-            className={`w-full text-center ${index === selectedTab ? 'bg-blue-500' : 'bg-white-500'}`}
-            key={tab}
-            onClick={() => onClickTab(index)}
-          >
-            {tab}
-          </div>
-        ))}
+      <div className="flex bg-pink-100 rounded-full p-1">
+        {tab.map((label, index) => {
+          const active = index === selectedTab;
+          return (
+            <button
+              key={label}
+              onClick={() => onClickTab(index)}
+              className={`flex-1 py-2 rounded-full text-sm font-semibold transition
+          ${active ? 'bg-brown-500 text-white shadow' : 'text-brown-500'}
+        `}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
+      {/* Slider */}
       {selectedTab === 0 ? (
         <ThumbnailSlider
           items={ANIMALS}
-          visibleCount={4}
+          cols={4}
+          rows={2}
           isSelected={(animal) => animal.type === selectedAnimal}
           onSelect={(animal) => setPart('animal', animal.type)}
           renderItem={(animal) => (
-            <Image src={animal.src} alt={animal.name} width={72} height={72} />
+            <Image
+              src={animal.src}
+              alt={animal.name}
+              width={100}
+              height={100}
+            />
           )}
         />
       ) : null}
       {selectedTab === 1 ? (
         <ThumbnailSlider
           items={ACCESSORY}
-          visibleCount={5}
+          cols={4}
+          rows={2}
           isSelected={(acce) => accessories.some((a) => a.src === acce.src)}
           onSelect={(acce) => addAccessory(acce)}
           renderItem={(animal) => (
-            <Image src={animal.src} alt={animal.name} width={72} height={72} />
+            <Image src={animal.src} alt={animal.name} width={40} height={40} />
           )}
           onRemove={(acce) => {
             removeAccessory(acce.id); // 스토어에서 제거
