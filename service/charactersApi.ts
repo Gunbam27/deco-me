@@ -1,5 +1,5 @@
 import { CharacterParts } from '@/types/character';
-import { supabase } from '../util/supabase';
+import { supabase } from '@/util/supabase';
 import { unwrap } from '@/util/dbResult';
 
 export async function createCharacter(params: {
