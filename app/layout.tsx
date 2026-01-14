@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Jua } from 'next/font/google';
 import './globals.css';
 import { AppBar } from '@/components/AppBar';
+import { AuthProvider } from './AuthProvider';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -38,8 +39,10 @@ export default function RootLayout({
           ${jua.variable}
         `}
       >
-        <AppBar />
-        {children}
+        <AuthProvider>
+          <AppBar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
