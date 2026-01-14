@@ -1,10 +1,12 @@
 import { supabase } from '@/util/supabase';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
 
 export async function signInWithKakao() {
+  console.log(baseUrl);
   return supabase.auth.signInWithOAuth({
     provider: 'kakao',
     options: {
-      redirectTo: `${location.origin}/`,
+      redirectTo: `${baseUrl}/`,
     },
   });
 }
