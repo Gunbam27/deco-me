@@ -24,7 +24,7 @@ export function AppBar() {
     >
       <div
         className="
-          mx-auto max-w-[640px]
+          mx-auto max-w-[480px]
           h-14
           px-4
           flex items-center justify-between

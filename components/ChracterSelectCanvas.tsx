@@ -13,7 +13,7 @@ import { createCharacter } from '@/service/charactersApi';
 
 export function ChracterSelectCanvas(props: { mode: EditorMode }) {
   //상수
-  const MAX_SIZE = 400;
+  const MAX_SIZE = 300;
   const CHARACTER_RATIO = 1;
 
   //스토어 관련
@@ -67,7 +67,7 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
   }, []);
 
   return (
-    <section className="mx-auto max-w-[640px] p-4 space-y-4">
+    <section className="mx-auto max-w-[480px] p-4 space-y-4">
       {/* Canvas Card */}
       <div ref={containerRef} className="w-full flex justify-center">
         <div className="bg-white rounded-2xl shadow-lg touch-none">
