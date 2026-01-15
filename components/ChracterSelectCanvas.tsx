@@ -128,7 +128,7 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
               <Transformer
                 name="transformer"
                 ref={transformerRef}
-                rotateEnabled={false}
+                rotateEnabled={true}
                 enabledAnchors={[
                   'top-left',
                   'top-right',
