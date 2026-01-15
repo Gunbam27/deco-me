@@ -37,8 +37,8 @@ export const useCharacterStore = create<CharacterState>((set) => ({
             {
               id: preset.id,
               src: preset.src,
-              x: 320,
-              y: 320,
+              x: 130,
+              y: 130,
               width: 50,
               scale: 1,
             },

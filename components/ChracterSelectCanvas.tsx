@@ -14,7 +14,7 @@ import { createCharacter } from '@/service/charactersApi';
 export function ChracterSelectCanvas(props: { mode: EditorMode }) {
   //상수
   const MAX_SIZE = 300;
-  const CHARACTER_RATIO = 1;
+  const CHARACTER_RATIO = 1.5;
 
   //스토어 관련
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
