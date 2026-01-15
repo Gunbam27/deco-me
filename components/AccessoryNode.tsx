@@ -23,14 +23,15 @@ export function AccessoryNode({
   const shapeRef = useRef<any>(null);
 
   useEffect(() => {
-    if (isSelected && transformerRef.current && shapeRef.current) {
+    if (isSelected && shapeRef.current && transformerRef.current) {
       transformerRef.current.nodes([shapeRef.current]);
-      transformerRef.current.getLayer().batchDraw();
+      transformerRef.current.getLayer()?.batchDraw();
     }
   }, [isSelected]);
 
   return (
     <KonvaImage
+      ref={shapeRef}
       name="accessory"
       image={img}
       x={acce.x}
@@ -47,7 +48,9 @@ export function AccessoryNode({
         });
       }}
       onTransformEnd={(e) => {
-        const node = e.target;
+        const node = shapeRef.current;
+        if (!node) return;
+
         const scale = node.scaleX();
 
         node.scaleX(1);
@@ -58,12 +61,6 @@ export function AccessoryNode({
           y: node.y(),
           scale,
         });
-      }}
-      ref={(node) => {
-        if (isSelected && node) {
-          transformerRef.current?.nodes([node]);
-          transformerRef.current?.getLayer()?.batchDraw();
-        }
       }}
     />
   );

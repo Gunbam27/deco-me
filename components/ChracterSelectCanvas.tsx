@@ -89,11 +89,15 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
               }
             }}
             onTouchStart={(e) => {
-              const clickedOnEmpty =
-                e.target === e.target.getStage() ||
-                !e.target.hasName('accessory');
+              const target = e.target;
 
-              if (clickedOnEmpty) {
+              const isAccessoryOrTransformer =
+                target.hasName('accessory') ||
+                target.findAncestor('.accessory') ||
+                target.hasName('transformer') ||
+                target.findAncestor('.transformer');
+
+              if (!isAccessoryOrTransformer) {
                 setSelectedId(null);
                 transformerRef.current?.nodes([]);
               }
