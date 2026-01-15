@@ -102,6 +102,7 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
                 transformerRef.current?.nodes([]);
               }
             }}
+            style={{ touchAction: 'none' }} // 모바일 바운딩 박스 터치안되는 문제
           >
             <Layer>
               {animalImage && (

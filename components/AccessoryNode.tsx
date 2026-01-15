@@ -36,6 +36,10 @@ export function AccessoryNode({
       image={img}
       x={acce.x}
       y={acce.y}
+      width={img?.width}
+      height={img?.height}
+      offsetX={img ? img.width / 2 : 0}
+      offsetY={img ? img.height / 2 : 0}
       scaleX={acce.scale}
       scaleY={acce.scale}
       draggable
