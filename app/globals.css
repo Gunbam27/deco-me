@@ -14,3 +14,7 @@ body {
   font-family: var(--font-jua);
   letter-spacing: 1;
 }
+
+canvas {
+  touch-action: none;
+}

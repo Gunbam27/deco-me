@@ -70,7 +70,7 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
     <section className="mx-auto max-w-[640px] p-4 space-y-4">
       {/* Canvas Card */}
       <div ref={containerRef} className="w-full flex justify-center">
-        <div className="bg-white rounded-2xl shadow-lg">
+        <div className="bg-white rounded-2xl shadow-lg touch-none">
           <Stage
             width={stageSize}
             height={stageSize}
@@ -120,7 +120,21 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
                   transformerRef={transformerRef}
                 />
               ))}
-              <Transformer name="transformer" ref={transformerRef} />
+              <Transformer
+                name="transformer"
+                ref={transformerRef}
+                rotateEnabled={false}
+                enabledAnchors={[
+                  'top-left',
+                  'top-right',
+                  'bottom-left',
+                  'bottom-right',
+                ]}
+                anchorSize={26} // ⭐ 핵심
+                anchorCornerRadius={13}
+                borderStroke="rgba(0,0,0,0.5)"
+                borderStrokeWidth={2}
+              />
             </Layer>
           </Stage>
         </div>
