@@ -10,6 +10,7 @@ import { AccessoryNode } from './AccessoryNode';
 import useImage from 'use-image';
 import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
+import { useAuthStore } from '@/store/authStore';
 
 export function ChracterSelectCanvas(props: { mode: EditorMode }) {
   //상수
@@ -41,19 +42,31 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
   const characterSize = stageSize * CHARACTER_RATIO;
   const offset = (stageSize - characterSize) / 2;
 
+  // 탭 관련
   function onClickTab(selectedTab: number) {
     setSelectedTab(selectedTab);
   }
 
+  // DB 저장 관련
+  const session = useAuthStore((s) => s.session);
+
   async function handleSave() {
+    if (!session?.user) {
+      alert('로그인이 필요합니다');
+      return;
+    }
+
+    const userId = session.user.id;
+
     await createCharacter({
-      ownerId: 'yejin',
-      createdBy: 'yejin',
+      ownerId: userId,
+      createdBy: userId,
       isSelf: true,
       parts,
     });
   }
 
+  // 리사이징 관련
   useEffect(() => {
     function resize() {
       if (!containerRef.current) return;
