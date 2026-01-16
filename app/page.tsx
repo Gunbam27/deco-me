@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/util/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { getMyCharacter } from '@/service/charactersApi';
 
 export default function EntryPage() {
   const router = useRouter();
   const { user, initialized } = useAuthStore();
+  const [hasCharacter, setHasCharacter] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!initialized) return;
@@ -19,17 +19,29 @@ export default function EntryPage() {
     }
 
     getMyCharacter(user.id)
-      .then(() => {
-        router.replace('/closet');
-      })
-      .catch(() => {
-        router.replace('/editor');
-      });
+      .then(() => setHasCharacter(true))
+      .catch(() => setHasCharacter(false));
   }, [initialized, user, router]);
 
-  return <p className="text-center mt-10">로딩 중...</p>;
-}
+  if (!initialized || hasCharacter === null) {
+    return <p className="text-center mt-10">로딩 중...</p>;
+  }
 
-// <main>
-//   <CharacterList />
-// </main>
+  return (
+    <main className="max-w-md mx-auto p-6 space-y-4">
+      <button
+        className="w-full py-3 rounded-xl bg-brown-500 text-white font-semibold"
+        onClick={() => router.push('/closet')}
+      >
+        👕 내 캐릭터 옷장 보기
+      </button>
+
+      <button
+        className="w-full py-3 rounded-xl bg-pink-400 text-white font-semibold"
+        onClick={() => router.push('/editor')}
+      >
+        🎨 캐릭터 꾸미기
+      </button>
+    </main>
+  );
+}

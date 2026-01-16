@@ -32,6 +32,16 @@ export async function getCharacterByOwnerId(ownerId: string) {
   return unwrap(result);
 }
 
+export async function getCharactersForCloset(userId: string) {
+  const result = await supabase
+    .from('characters')
+    .select('*')
+    .or(`owner_id.eq.${userId},created_by.eq.${userId}`)
+    .order('created_at', { ascending: false });
+
+  return unwrap(result);
+}
+
 export async function getMyCharacter(ownerId: string) {
   const result = await supabase
     .from('characters')
