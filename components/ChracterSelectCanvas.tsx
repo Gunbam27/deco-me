@@ -1,18 +1,23 @@
 'use client';
-import { ACCESSORY, ANIMALS, BACKGROUND } from '@/types/character';
+import { ACCESSORY, ANIMALS } from '@/types/character';
 import { useEffect, useRef, useState } from 'react';
 import { ThumbnailSlider } from './ThumbnailSlider';
 import { useCharacterStore } from '@/store/charaterStore';
 import Image from 'next/image';
-import { createAccessoryFromPreset } from '@/util/accessory';
 import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
 import { AccessoryNode } from './AccessoryNode';
 import useImage from 'use-image';
 import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
-import { useAuthStore } from '@/store/authStore';
+import { Session } from '@supabase/supabase-js';
 
-export function ChracterSelectCanvas(props: { mode: EditorMode }) {
+interface Props {
+  mode: EditorMode;
+  ownerId: string;
+  session: Session;
+}
+
+export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
   //상수
   const MAX_SIZE = 300;
   const CHARACTER_RATIO = 1.5;
@@ -47,9 +52,6 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
     setSelectedTab(selectedTab);
   }
 
-  // DB 저장 관련
-  const session = useAuthStore((s) => s.session);
-
   async function handleSave() {
     if (!session?.user) {
       alert('로그인이 필요합니다');
@@ -59,9 +61,9 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
     const userId = session.user.id;
 
     await createCharacter({
-      ownerId: userId,
+      ownerId,
       createdBy: userId,
-      isSelf: true,
+      isSelf: mode === 'self',
       parts,
     });
   }
@@ -211,14 +213,14 @@ export function ChracterSelectCanvas(props: { mode: EditorMode }) {
         />
       ) : null}
       <div className="text-center">
-        {props.mode !== 'readonly' && (
+        {mode !== 'readonly' && (
           <button
             className="flex-1 py-2 w-20 rounded-full text-sm font-semibold transition
           bg-brown-500 text-white shadow
         "
             onClick={handleSave}
           >
-            저장하기
+            {mode == 'self' ? '저장하기' : '친구에게 보내기'}
           </button>
         )}
       </div>
