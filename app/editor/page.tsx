@@ -1,12 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { EditorMode } from '@/types/editormode';
 import { EditorHeader } from '@/components/EditorHeader';
 import { ChracterSelectCanvas } from '@/components/ChracterSelectCanvas';
 
-export default function EditorPage() {
+function EditorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { session, initialized } = useAuthStore();
@@ -64,5 +65,17 @@ export default function EditorPage() {
       <EditorHeader mode={mode} ownerName={ownerName} />
       <ChracterSelectCanvas mode={mode} ownerId={ownerId} session={session} />
     </>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-center text-gray-500">로딩 중...</p>
+      </div>
+    }>
+      <EditorContent />
+    </Suspense>
   );
 }

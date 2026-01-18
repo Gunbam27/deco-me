@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { KakaoLoginButton } from '@/components/KakaoLoginButton';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
@@ -35,5 +35,17 @@ export default function LoginPage() {
         <KakaoLoginButton returnUrl={returnUrl || undefined} />
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-center text-gray-500">로딩 중...</p>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

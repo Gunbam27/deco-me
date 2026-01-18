@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Jua } from 'next/font/google';
+import { Suspense } from 'react';
 import './globals.css';
 import { AppBar } from '@/components/AppBar';
 import { AuthProvider } from '../components/AuthProvider';
@@ -39,10 +40,12 @@ export default function RootLayout({
           ${jua.variable}
         `}
       >
-        <AuthProvider>
-          <AppBar />
-          {children}
-        </AuthProvider>
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><p className="text-gray-500">로딩 중...</p></div>}>
+          <AuthProvider>
+            <AppBar />
+            {children}
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );
