@@ -39,7 +39,7 @@ export default function ClosetPage() {
         <h2 className="font-semibold">👤 내 캐릭터</h2>
 
         {characters.map((character) => (
-          <CharacterCard character={character} />
+          <CharacterCard key={character.id} character={character} />
         ))}
       </section>
 
