@@ -1,14 +1,20 @@
 'use client';
-import { createCharacter } from '@/service/charactersApi';
-import { useCharacterStore } from '@/store/charaterStore';
+
 import { ChracterSelectCanvas } from './ChracterSelectCanvas';
 import { EditorMode } from '@/types/editormode';
-import { AppBar } from './AppBar';
+import { Session } from '@supabase/supabase-js';
 
-export default function CharacterEditor(props: { mode: EditorMode }) {
+interface Props {
+  mode: EditorMode;
+  ownerId: string;
+  ownerName?: string | null;
+  session: Session;
+}
+
+export default function CharacterEditor({ mode, ownerId, session }: Props) {
   return (
     <main className="flex flex-col justify-items-center">
-      <ChracterSelectCanvas mode="self" />
+      <ChracterSelectCanvas mode={mode} ownerId={ownerId} session={session} />
     </main>
   );
 }
