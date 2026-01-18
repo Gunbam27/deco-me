@@ -1,12 +1,15 @@
 'use client';
 
 import { signInWithKakao } from '@/service/authApi';
-import { supabase } from '@/util/supabase';
 
-export function KakaoLoginButton() {
+interface Props {
+  returnUrl?: string;
+}
+
+export function KakaoLoginButton({ returnUrl }: Props) {
   return (
     <button
-      onClick={signInWithKakao}
+      onClick={() => signInWithKakao(returnUrl)}
       className="
         w-full p-3 rounded-xl
         bg-[#FEE500] text-black font-semibold
