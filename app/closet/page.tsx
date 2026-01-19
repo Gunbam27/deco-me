@@ -24,8 +24,7 @@ export default function ClosetPage() {
 
   if (!initialized || !user) return null;
 
-  const myCharacter = characters.find((c) => c.is_self === true);
-
+  const myCharacters = characters.filter((c) => c.owner_id === user.id);
   const giftedCharacters = characters.filter(
     (c) => c.created_by === user.id && c.owner_id !== user.id,
   );
@@ -38,12 +37,20 @@ export default function ClosetPage() {
       <section className="space-y-2">
         <h2 className="font-semibold">👤 내 캐릭터</h2>
 
-        {characters.map((character) => (
-          <CharacterCard key={character.id} character={character} />
+        {myCharacters.length === 0 && (
+          <p className="text-sm text-gray-500">아직 없어요!</p>
+        )}
+
+        {myCharacters.map((character) => (
+          <CharacterCard
+            key={character.id}
+            character={character}
+            currentUserId={user.id}
+          />
         ))}
       </section>
 
-      {/* 친구 캐릭터 */}
+      {/* 내가 만들어준 캐릭터 */}
       <section className="space-y-2">
         <h2 className="font-semibold">🎁 내가 만들어준 캐릭터</h2>
 
@@ -52,7 +59,11 @@ export default function ClosetPage() {
         )}
 
         {giftedCharacters.map((c) => (
-          <CharacterCard key={c.id} character={c} />
+          <CharacterCard
+            key={c.id}
+            character={c}
+            currentUserId={user.id}
+          />
         ))}
       </section>
 

@@ -4,7 +4,9 @@ import { unwrap } from '@/util/dbResult';
 
 export async function createCharacter(params: {
   ownerId: string;
+  ownerName?: string;
   createdBy: string;
+  createdByName?: string;
   isSelf: boolean;
   parts: CharacterParts;
 }) {
@@ -12,7 +14,9 @@ export async function createCharacter(params: {
     .from('characters')
     .insert({
       owner_id: params.ownerId,
+      owner_name: params.ownerName,
       created_by: params.createdBy,
+      created_by_name: params.createdByName,
       is_self: params.isSelf,
       parts: params.parts,
     })

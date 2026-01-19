@@ -63,7 +63,12 @@ function EditorContent() {
   return (
     <>
       <EditorHeader mode={mode} ownerName={ownerName} />
-      <ChracterSelectCanvas mode={mode} ownerId={ownerId} session={session} />
+      <ChracterSelectCanvas
+        mode={mode}
+        ownerId={ownerId}
+        ownerName={ownerName}
+        session={session}
+      />
     </>
   );
 }

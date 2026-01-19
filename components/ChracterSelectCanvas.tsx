@@ -15,10 +15,11 @@ import { useRouter } from 'next/navigation';
 interface Props {
   mode: EditorMode;
   ownerId: string;
+  ownerName?: string;
   session: Session;
 }
 
-export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
+export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Props) {
   const router = useRouter();
   //상수
   const MAX_SIZE = 300;
@@ -63,12 +64,17 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
     }
 
     const userId = session.user.id;
+    const userName = session.user.user_metadata?.display_name ||
+                    session.user.user_metadata?.name ||
+                    '친구';
 
     try {
       setSaving(true);
       await createCharacter({
         ownerId,
+        ownerName,
         createdBy: userId,
+        createdByName: userName,
         isSelf: mode === 'self',
         parts,
       });
