@@ -269,7 +269,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? '저장 중...' : mode == 'self' ? '저장하기' : '친구에게 보내기'}
+            {saving ? '저장 중...' : mode == 'self' ? '저장하기' : '보내기'}
           </button>
         )}
       </div>
