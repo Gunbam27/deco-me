@@ -18,9 +18,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 1. 최초 세션 동기화
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        // refresh token이 없거나 깨진 경우(예: 로컬 스토리지 정리/만료)는 정상 케이스로 처리
+        if (error) {
+          clear();
+          return;
+        }
+        setSession(data.session);
+      })
+      .catch(() => {
+        // 예외가 나도 앱이 죽지 않게 무조건 비로그인 상태로 정리
+        clear();
+      });
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
