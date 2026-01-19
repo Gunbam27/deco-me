@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
-interface ThumbnailSliderProps<T> {
+interface ThumbnailSliderProps<T extends { name?: string }> {
   items: T[];
   cols?: number;
   rows?: number;
@@ -13,9 +13,10 @@ interface ThumbnailSliderProps<T> {
   isSelected: (item: T) => boolean;
   onSelect: (item: T) => void;
   onRemove?: (item: T) => void;
+  showName?: boolean;
 }
 
-export function ThumbnailSlider<T>({
+export function ThumbnailSlider<T extends { name?: string }>({
   items,
   cols = 3,
   rows = 2,
@@ -23,6 +24,7 @@ export function ThumbnailSlider<T>({
   isSelected,
   onSelect,
   onRemove,
+  showName = true,
 }: ThumbnailSliderProps<T>) {
   const [page, setPage] = useState(0);
 
@@ -63,33 +65,49 @@ export function ThumbnailSlider<T>({
           return (
             <div
               key={idx}
-              className={`
-              relative aspect-square rounded-xl bg-white shadow-sm
-              flex items-center justify-center
-              cursor-pointer
-              ${selected ? 'ring-2 ring-[#7c3b18]' : 'ring-1 ring-pink-200'}
-            `}
-              onClick={() => onSelect(item)}
+              className="flex flex-col gap-1.5"
             >
-              {/* 썸네일 이미지 */}
-              {renderItem(item, selected)}
+              <div
+                className={`
+                relative aspect-square rounded-xl bg-white shadow-sm
+                flex items-center justify-center
+                cursor-pointer
+                ${selected ? 'ring-2 ring-[#7c3b18]' : 'ring-1 ring-pink-200'}
+              `}
+                onClick={() => onSelect(item)}
+              >
+                {/* 썸네일 이미지 */}
+                {renderItem(item, selected)}
 
-              {/* X 버튼: onRemove가 있으면 렌더링 */}
-              {onRemove && selected && (
-                <button
-                  className="
-                  absolute -top-2 -right-2
-                  w-6 h-6 rounded-full
-                  bg-red-500 text-white text-sm
-                  flex items-center justify-center
-                "
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(item);
-                  }}
-                >
-                  <X size={16} strokeWidth={3} />
-                </button>
+                {/* X 버튼: onRemove가 있으면 렌더링 */}
+                {onRemove && selected && (
+                  <button
+                    className="
+                    absolute -top-2 -right-2
+                    w-6 h-6 rounded-full
+                    bg-red-500 text-white text-sm
+                    flex items-center justify-center
+                    z-10
+                  "
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemove(item);
+                    }}
+                  >
+                    <X size={16} strokeWidth={3} />
+                  </button>
+                )}
+              </div>
+              
+              {/* 이름 표시 */}
+              {showName && item.name && (
+                <p className={`
+                  text-xs text-center
+                  ${selected ? 'text-[#7c3b18] font-semibold' : 'text-gray-600'}
+                  truncate px-1
+                `}>
+                  {item.name}
+                </p>
               )}
             </div>
           );
@@ -98,7 +116,10 @@ export function ThumbnailSlider<T>({
         {Array.from({
           length: cols * rows - visibleItems.length,
         }).map((_, i) => (
-          <div key={i} className="aspect-square" />
+          <div key={i} className="flex flex-col gap-1.5">
+            <div className="aspect-square" />
+            {showName && <div className="h-4" />}
+          </div>
         ))}
       </div>
 

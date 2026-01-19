@@ -32,7 +32,7 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
   const updateAccessory = useCharacterStore((s) => s.updateAccessory);
 
   //탭
-  const tab = ['성격', '악세사리'];
+  const tab = ['외형', '악세사리'];
   const [selectedTab, setSelectedTab] = useState(0);
 
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
