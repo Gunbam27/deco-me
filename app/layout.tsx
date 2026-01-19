@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import './globals.css';
 import { AppBar } from '@/components/AppBar';
 import { AuthProvider } from '../components/AuthProvider';
+import { ToastHost } from '@/components/ToastHost';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -44,6 +45,7 @@ export default function RootLayout({
           <AuthProvider>
             <AppBar />
             {children}
+            <ToastHost />
           </AuthProvider>
         </Suspense>
       </body>

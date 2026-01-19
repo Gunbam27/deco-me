@@ -5,10 +5,12 @@ import { supabase } from '@/util/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import { createShareLink } from '@/util/shareLink';
+import { useToastStore } from '@/store/toastStore';
 
 export function AppBar() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
+  const showToast = useToastStore((s) => s.show);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -25,7 +27,7 @@ export function AppBar() {
     });
 
     await navigator.clipboard.writeText(link);
-    alert('친구에게 보낼 링크가 복사됐어요!');
+    showToast('친구에게 보낼 링크가 복사됐어요!', 600);
   }
 
   return (

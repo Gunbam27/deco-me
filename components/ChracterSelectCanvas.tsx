@@ -10,6 +10,7 @@ import useImage from 'use-image';
 import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
 import { Session } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   mode: EditorMode;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
+  const router = useRouter();
   //상수
   const MAX_SIZE = 300;
   const CHARACTER_RATIO = 1.5;
@@ -40,6 +42,8 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
 
   const transformerRef = useRef<any>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [savedModalOpen, setSavedModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   //반응형 스테이지 사이즈 계산
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,12 +64,18 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
 
     const userId = session.user.id;
 
-    await createCharacter({
-      ownerId,
-      createdBy: userId,
-      isSelf: mode === 'self',
-      parts,
-    });
+    try {
+      setSaving(true);
+      await createCharacter({
+        ownerId,
+        createdBy: userId,
+        isSelf: mode === 'self',
+        parts,
+      });
+      setSavedModalOpen(true);
+    } finally {
+      setSaving(false);
+    }
   }
 
   // 리사이징 관련
@@ -83,6 +93,38 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
 
   return (
     <section className="mx-auto max-w-[480px] p-4 space-y-4">
+      {/* 저장 완료 모달 */}
+      {savedModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center px-6">
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setSavedModalOpen(false)}
+          />
+          <div className="relative w-full max-w-sm rounded-3xl bg-white shadow-xl border border-pink-200 p-5">
+            <h3 className="text-brown-500 text-lg font-bold text-center">
+              저장됐어요!
+            </h3>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              옷장에서 확인할 수 있어요.
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                className="flex-1 py-2.5 rounded-2xl bg-pink-100 text-brown-500 font-semibold hover:bg-pink-200 transition"
+                onClick={() => setSavedModalOpen(false)}
+              >
+                닫기
+              </button>
+              <button
+                className="flex-1 py-2.5 rounded-2xl bg-brown-500 text-white font-semibold shadow hover:bg-brown-700 transition"
+                onClick={() => router.push('/closet')}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Canvas Card */}
       <div ref={containerRef} className="w-full flex justify-center">
         <div className="bg-white rounded-2xl shadow-lg touch-none">
@@ -219,8 +261,9 @@ export function ChracterSelectCanvas({ mode, ownerId, session }: Props) {
           bg-brown-500 text-white shadow
         "
             onClick={handleSave}
+            disabled={saving}
           >
-            {mode == 'self' ? '저장하기' : '친구에게 보내기'}
+            {saving ? '저장 중...' : mode == 'self' ? '저장하기' : '친구에게 보내기'}
           </button>
         )}
       </div>
