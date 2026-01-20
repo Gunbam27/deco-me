@@ -42,7 +42,7 @@ export default function ClosetPage() {
   );
 
   return (
-    <main className="max-w-md mx-auto p-6 space-y-6">
+    <main className="max-w-md mx-auto p-6 space-y-6 min-h-screen">
       <h1 className="text-xl font-bold text-center">내 옷장 👕</h1>
 
       {/* 내 캐릭터 */}
