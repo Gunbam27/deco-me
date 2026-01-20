@@ -1,6 +1,6 @@
 'use client';
 
-import { Stage, Layer, Image as KonvaImage } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Text } from 'react-konva';
 import useImage from 'use-image';
 import { ANIMALS } from '@/types/character';
 import { useState } from 'react';
@@ -15,12 +15,14 @@ export function CharacterPreviewCanvas({ parts, size = 160 }: Props) {
   const CHARACTER_RATIO = 1.5;
   const animal = ANIMALS.find((a) => a.type === parts.animal);
   const [animalImage] = useImage(animal?.src || '');
+  const [speechBubbleImage] = useImage('/speech-bubble.svg');
   const [stageSize, setStageSize] = useState(MAX_SIZE);
   const characterSize = stageSize * CHARACTER_RATIO;
   const offset = (stageSize - characterSize) / 2;
 
   return (
     <Stage width={MAX_SIZE} height={MAX_SIZE}>
+      {/* 메인 레이어 - 캐릭터와 악세사리 */}
       <Layer>
         {/* 캐릭터 */}
         {animalImage && (
@@ -38,6 +40,35 @@ export function CharacterPreviewCanvas({ parts, size = 160 }: Props) {
         {parts.accessories?.map((acce: any) => (
           <AccessoryPreview key={acce.id} acce={acce} />
         ))}
+      </Layer>
+
+      {/* 말풍선 레이어 - 항상 맨 위 */}
+      <Layer>
+        {parts.speechBubble && speechBubbleImage && (
+          <>
+            <KonvaImage
+              listening={false}
+              image={speechBubbleImage}
+              x={210}
+              y={20}
+              width={90}
+              height={80}
+            />
+            <Text
+              text={parts.speechBubble}
+              x={210}
+              y={35}
+              width={90}
+              height={40}
+              align="center"
+              verticalAlign="middle"
+              fontSize={16}
+              fontFamily="Jua"
+              fill="#333"
+              listening={false}
+            />
+          </>
+        )}
       </Layer>
     </Stage>
   );

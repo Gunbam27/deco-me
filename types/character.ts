@@ -4,6 +4,7 @@ export type CharacterParts = {
   animal: AnimalType;
   accessories: Accessory[];
   background?: string;
+  speechBubble?: string; // 4글자 이내 말풍선 텍스트
 };
 
 export type Character = {

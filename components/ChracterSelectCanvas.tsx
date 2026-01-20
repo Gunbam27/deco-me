@@ -4,13 +4,21 @@ import { useEffect, useRef, useState } from 'react';
 import { ThumbnailSlider } from './ThumbnailSlider';
 import { useCharacterStore } from '@/store/charaterStore';
 import Image from 'next/image';
-import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Text, Transformer } from 'react-konva';
 import { AccessoryNode } from './AccessoryNode';
 import useImage from 'use-image';
 import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
 import { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
+
+// 말풍선 상수
+const SPEECH_BUBBLE_CONFIG = {
+  X_RATIO: 0.73,
+  Y_RATIO: 0.1,
+  WIDTH: 80,
+  HEIGHT: 40,
+} as const;
 
 interface Props {
   mode: EditorMode;
@@ -40,11 +48,14 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
 
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
   const [animalImage] = useImage(animal?.src || '');
+  const [speechBubbleImage] = useImage('/speech-bubble.svg');
 
   const transformerRef = useRef<any>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [savedModalOpen, setSavedModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [speechBubbleModalOpen, setSpeechBubbleModalOpen] = useState(false);
+  const [speechBubbleText, setSpeechBubbleText] = useState('');
 
   //반응형 스테이지 사이즈 계산
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,6 +74,11 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
       return;
     }
 
+    // 말풍선 입력 팝업 열기
+    setSpeechBubbleModalOpen(true);
+  }
+
+  async function handleSaveWithSpeechBubble() {
     const userId = session.user.id;
     const userName = session.user.user_metadata?.display_name ||
                     session.user.user_metadata?.name ||
@@ -76,9 +92,14 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
         createdBy: userId,
         createdByName: userName,
         isSelf: mode === 'self',
-        parts,
+        parts: {
+          ...parts,
+          speechBubble: speechBubbleText,
+        },
       });
       setSavedModalOpen(true);
+      setSpeechBubbleModalOpen(false);
+      setSpeechBubbleText('');
     } finally {
       setSaving(false);
     }
@@ -167,6 +188,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
             }}
             style={{ touchAction: 'none' }} // 모바일 바운딩 박스 터치안되는 문제
           >
+            {/* 메인 레이어 - 동물, 악세사리, 트랜스포머 */}
             <Layer>
               {animalImage && (
                 <KonvaImage
@@ -203,6 +225,35 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
                 borderStroke="rgba(0,0,0,0.5)"
                 borderStrokeWidth={2}
               />
+            </Layer>
+
+            {/* 말풍선 레이어 - 항상 맨 위에 렌더링 */}
+            <Layer>
+              {speechBubbleText && speechBubbleImage && (
+                <>
+                  <KonvaImage
+                    listening={false}
+                    image={speechBubbleImage}
+                    x={stageSize * SPEECH_BUBBLE_CONFIG.X_RATIO}
+                    y={stageSize * SPEECH_BUBBLE_CONFIG.Y_RATIO}
+                    width={SPEECH_BUBBLE_CONFIG.WIDTH}
+                    height={SPEECH_BUBBLE_CONFIG.HEIGHT}
+                  />
+                  <Text
+                    text={speechBubbleText}
+                    x={stageSize * SPEECH_BUBBLE_CONFIG.X_RATIO}
+                    y={stageSize * SPEECH_BUBBLE_CONFIG.Y_RATIO}
+                    width={SPEECH_BUBBLE_CONFIG.WIDTH}
+                    height={SPEECH_BUBBLE_CONFIG.HEIGHT}
+                    align="center"
+                    verticalAlign="middle"
+                    fontSize={16}
+                    fontFamily="Jua"
+                    fill="#333"
+                    listening={false}
+                  />
+                </>
+              )}
             </Layer>
           </Stage>
         </div>
@@ -273,6 +324,60 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
           </button>
         )}
       </div>
+
+      {/* 말풍선 입력 모달 */}
+      {speechBubbleModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSpeechBubbleModalOpen(false)} />
+          <div className="relative mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-gray-900">💬 말풍선 추가</h3>
+                <p className="mt-2 text-sm text-gray-600">캐릭터가 할 한마디를 입력해주세요 (최대 4글자)</p>
+              </div>
+
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={speechBubbleText}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 4) {
+                      setSpeechBubbleText(value);
+                    }
+                  }}
+                  placeholder="예: 안녕!"
+                  className="w-full px-4 py-3 text-center text-lg border-2 border-pink-200 rounded-xl focus:border-pink-400 focus:outline-none"
+                  maxLength={4}
+                  autoFocus
+                />
+                <div className="text-center text-xs text-gray-500">
+                  {speechBubbleText.length}/4
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setSpeechBubbleModalOpen(false);
+                    setSpeechBubbleText('');
+                  }}
+                  className="flex-1 rounded-xl border border-gray-300 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleSaveWithSpeechBubble}
+                  disabled={!speechBubbleText.trim() || saving}
+                  className="flex-1 rounded-xl bg-pink-500 py-3 text-sm font-semibold text-white hover:bg-pink-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {saving ? '저장 중...' : '완료'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
