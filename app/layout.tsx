@@ -5,6 +5,7 @@ import './globals.css';
 import { AppBar } from '@/components/AppBar';
 import { AuthProvider } from '../components/AuthProvider';
 import { ToastHost } from '@/components/ToastHost';
+import { ModalHost } from '@/components/ModalHost';
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -46,6 +47,7 @@ export default function RootLayout({
             <AppBar />
             {children}
             <ToastHost />
+            <ModalHost />
           </AuthProvider>
         </Suspense>
       </body>

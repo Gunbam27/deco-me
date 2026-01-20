@@ -56,3 +56,14 @@ export async function getMyCharacter(ownerId: string) {
 
   return unwrap(result);
 }
+
+export async function softDeleteCharacter(characterId: string) {
+  const result = await supabase
+    .from('characters')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', characterId)
+    .select()
+    .single();
+
+  return unwrap(result);
+}

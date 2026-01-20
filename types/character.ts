@@ -13,6 +13,7 @@ export type Character = {
   isSelf: boolean; // 내가 만든 내 캐릭터인지 여부
   parts: CharacterParts; // 캐릭터 구성 요소
   createdAt: string;
+  deletedAt?: string; // 삭제된 시간 (소프트 삭제용)
 };
 
 export type Accessory = {

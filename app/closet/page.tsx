@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { getCharactersForCloset } from '@/service/charactersApi';
+import { getCharactersForCloset, softDeleteCharacter } from '@/service/charactersApi';
 import { CharacterCard } from '@/components/CharacterCard';
 
 export default function ClosetPage() {
@@ -24,9 +24,21 @@ export default function ClosetPage() {
 
   if (!initialized || !user) return null;
 
-  const myCharacters = characters.filter((c) => c.owner_id === user.id);
+  const handleDelete = async (characterId: string) => {
+    try {
+      await softDeleteCharacter(characterId);
+      // 삭제 후 캐릭터 목록 다시 불러오기
+      const updatedCharacters = await getCharactersForCloset(user.id);
+      setCharacters(updatedCharacters);
+    } catch (error) {
+      console.error('캐릭터 삭제 실패:', error);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
+  const myCharacters = characters.filter((c) => c.owner_id === user.id && !c.deleted_at);
   const giftedCharacters = characters.filter(
-    (c) => c.created_by === user.id && c.owner_id !== user.id,
+    (c) => c.created_by === user.id && c.owner_id !== user.id && !c.deleted_at,
   );
 
   return (
@@ -46,6 +58,7 @@ export default function ClosetPage() {
             key={character.id}
             character={character}
             currentUserId={user.id}
+            onDelete={handleDelete}
           />
         ))}
       </section>
@@ -63,6 +76,7 @@ export default function ClosetPage() {
             key={c.id}
             character={c}
             currentUserId={user.id}
+            onDelete={handleDelete}
           />
         ))}
       </section>

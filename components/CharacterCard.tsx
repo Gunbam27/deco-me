@@ -1,19 +1,41 @@
 import { CharacterPreviewCanvas } from './CharacterPreviewCanvas';
+import { useModalStore } from '@/store/modalStore';
 
 export function CharacterCard({
   character,
-  currentUserId
+  currentUserId,
+  onDelete
 }: {
   character: any;
   currentUserId?: string;
+  onDelete?: (characterId: string) => void;
 }) {
+  const { showDeleteConfirm } = useModalStore();
   const parts =
     typeof character.parts === 'string'
       ? JSON.parse(character.parts)
       : character.parts;
 
+  const isOwner = character.owner_id === currentUserId;
+  const isDeleted = !!character.deleted_at;
+
+  if (isDeleted) return null;
+
   return (
-    <div className="flex flex-col items-center gap-1 p-3 rounded-xl border shadow-sm cursor-pointer hover:bg-gray-50 bg-white">
+    <div className="relative flex flex-col items-center gap-1 p-3 rounded-xl border shadow-sm cursor-pointer hover:bg-gray-50 bg-white">
+      {/* 삭제 버튼 - 소유자인 경우에만 표시 */}
+      {isOwner && onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            showDeleteConfirm(() => onDelete(character.id));
+          }}
+          className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600"
+        >
+          ✕
+        </button>
+      )}
+
       <CharacterPreviewCanvas parts={parts} size={120} />
       {/* 만든 사람 표시 */}
       <div className="flex-1">
