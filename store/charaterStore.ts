@@ -10,13 +10,15 @@ interface CharacterState {
   updateAccessory: (id: string, patch: Partial<Accessory>) => void;
   reset: () => void;
 }
-
+const DEFAULT_PARTS: CharacterParts = {
+  animal: 'capybara',
+  accessories: [],
+  background: 'default',
+  speechBubble: '',
+};
+  
 export const useCharacterStore = create<CharacterState>((set) => ({
-  parts: {
-    animal: 'capybara',
-    accessories: [],
-    background: 'default',
-  },
+  parts: DEFAULT_PARTS,
   setPart: (key, value) =>
     set((state) => ({
       parts: {
@@ -67,10 +69,6 @@ export const useCharacterStore = create<CharacterState>((set) => ({
   setAllparts: (parts) => set({ parts }),
   reset: () =>
     set({
-      parts: {
-        animal: 'capybara',
-        accessories: [],
-        background: 'default',
-      },
+      parts: DEFAULT_PARTS,
     }),
 }));

@@ -41,6 +41,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
   const addAccessory = useCharacterStore((s) => s.addAccessory);
   const removeAccessory = useCharacterStore((s) => s.removeAccessory);
   const updateAccessory = useCharacterStore((s) => s.updateAccessory);
+  const reset = useCharacterStore((s) => s.reset);
 
   //탭
   const tab = ['외형', '악세사리'];
@@ -97,6 +98,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
           speechBubble: speechBubbleText,
         },
       });
+      reset();
       setSavedModalOpen(true);
       setSpeechBubbleModalOpen(false);
       setSpeechBubbleText('');
