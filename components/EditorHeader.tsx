@@ -7,7 +7,7 @@ interface Props {
 
 export function EditorHeader({ mode, ownerName }: Props) {
   return (
-    <header className="py-3 text-center">
+    <header className="py-1 text-center">
       {mode === 'friend' ? (
         <h1 className="text-lg font-bold text-brown-500">
           💌 {ownerName}의 캐릭터 만들어주기

@@ -42,14 +42,16 @@ export default function RootLayout({
           ${jua.variable}
         `}
       >
-        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><p className="text-gray-500">로딩 중...</p></div>}>
-          <AuthProvider>
-            <AppBar />
-            {children}
-            <ToastHost />
-            <ModalHost />
-          </AuthProvider>
-        </Suspense>
+        <div className="min-w-[300px]">
+          <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><p className="text-gray-500">로딩 중...</p></div>}>
+            <AuthProvider>
+              <AppBar />
+              {children}
+              <ToastHost />
+              <ModalHost />
+            </AuthProvider>
+          </Suspense>
+        </div>
       </body>
     </html>
   );

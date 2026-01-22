@@ -121,7 +121,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
   }, []);
 
   return (
-    <section className="mx-auto max-w-[480px] p-4 space-y-4">
+    <section className="mx-auto max-w-[480px] p-1 space-y-4">
       {/* 저장 완료 모달 */}
       {savedModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center px-6">
