@@ -360,7 +360,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
                 <button
                   onClick={handleSaveWithSpeechBubble}
                   disabled={!speechBubbleText.trim() || saving}
-                  className="flex-1 rounded-xl bg-pink-500 py-3 text-sm font-semibold text-white hover:bg-pink-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="flex-1 rounded-xl bg-pink-500 py-3 text-sm font-semibold text-white bg-pink-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   {saving ? '저장 중...' : '완료'}
                 </button>
