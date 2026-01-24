@@ -291,7 +291,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
           isSelected={(acce) => accessories.some((a) => a.src === acce.src)}
           onSelect={(acce) => addAccessory(acce)}
           renderItem={(animal) => (
-            <Image src={animal.src} alt={animal.name} width={40} height={40} />
+            <Image src={animal.src} alt={animal.name} width={40} height={40} className='h-[60px]'/>
           )}
           onRemove={(acce) => {
             removeAccessory(acce.id); // 스토어에서 제거
