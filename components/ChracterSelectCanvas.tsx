@@ -235,7 +235,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
                     x={stageSize * SPEECH_BUBBLE_X_RATIO}
                     y={stageSize * SPEECH_BUBBLE_Y_RATIO}
                     width={SPEECH_BUBBLE_WIDTH}
-                    height={SPEECH_BUBBLE_HEIGHT}
+                    height={SPEECH_BUBBLE_HEIGHT-4}
                     align="center"
                     verticalAlign="middle"
                     fontSize={SPEECH_BUBBLE_FONT_SIZE}

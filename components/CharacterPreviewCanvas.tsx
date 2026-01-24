@@ -4,7 +4,7 @@ import { Stage, Layer, Image as KonvaImage, Text } from 'react-konva';
 import useImage from 'use-image';
 import { ANIMALS } from '@/types/character';
 import { useState } from 'react';
-import { CANVAS_CHARACTER_RATIO, CANVAS_MAX_SIZE } from '@/util/canvasConfig';
+import { CANVAS_CHARACTER_RATIO, CANVAS_MAX_SIZE, SPEECH_BUBBLE_FONT_SIZE, SPEECH_BUBBLE_HEIGHT, SPEECH_BUBBLE_WIDTH, SPEECH_BUBBLE_X_RATIO, SPEECH_BUBBLE_Y_RATIO } from '@/util/canvasConfig';
 
 interface Props {
   parts: any;
@@ -41,27 +41,27 @@ export function CharacterPreviewCanvas({ parts, size = 160 }: Props) {
         ))}
       </Layer>
 
-      {/* 말풍선 레이어 - 항상 맨 위 */}
+      {/* 말풍선 레이어 - 항상 맨 위에 렌더링 */}
       <Layer>
         {parts.speechBubble && speechBubbleImage && (
           <>
             <KonvaImage
               listening={false}
               image={speechBubbleImage}
-              x={210}
-              y={20}
-              width={90}
-              height={80}
+              x={stageSize * SPEECH_BUBBLE_X_RATIO}
+              y={stageSize * SPEECH_BUBBLE_Y_RATIO}
+              width={SPEECH_BUBBLE_WIDTH}
+              height={SPEECH_BUBBLE_HEIGHT}
             />
             <Text
               text={parts.speechBubble}
-              x={210}
-              y={35}
-              width={90}
-              height={40}
+              x={stageSize * SPEECH_BUBBLE_X_RATIO}
+              y={stageSize * SPEECH_BUBBLE_Y_RATIO}
+              width={SPEECH_BUBBLE_WIDTH}
+              height={SPEECH_BUBBLE_HEIGHT-4}
               align="center"
               verticalAlign="middle"
-              fontSize={16}
+              fontSize={SPEECH_BUBBLE_FONT_SIZE}
               fontFamily="Jua"
               fill="#333"
               listening={false}
