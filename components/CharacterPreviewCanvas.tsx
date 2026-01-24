@@ -4,6 +4,7 @@ import { Stage, Layer, Image as KonvaImage, Text } from 'react-konva';
 import useImage from 'use-image';
 import { ANIMALS } from '@/types/character';
 import { useState } from 'react';
+import { CANVAS_CHARACTER_RATIO, CANVAS_MAX_SIZE } from '@/util/canvasConfig';
 
 interface Props {
   parts: any;
@@ -11,17 +12,15 @@ interface Props {
 }
 
 export function CharacterPreviewCanvas({ parts, size = 160 }: Props) {
-  const MAX_SIZE = 300;
-  const CHARACTER_RATIO = 1.5;
   const animal = ANIMALS.find((a) => a.type === parts.animal);
   const [animalImage] = useImage(animal?.src || '');
   const [speechBubbleImage] = useImage('/speech-bubble.svg');
-  const [stageSize, setStageSize] = useState(MAX_SIZE);
-  const characterSize = stageSize * CHARACTER_RATIO;
+  const [stageSize, setStageSize] = useState(CANVAS_MAX_SIZE);
+  const characterSize = stageSize * CANVAS_CHARACTER_RATIO;
   const offset = (stageSize - characterSize) / 2;
 
   return (
-    <Stage width={MAX_SIZE} height={MAX_SIZE}>
+    <Stage width={CANVAS_MAX_SIZE} height={CANVAS_MAX_SIZE}>
       {/* 메인 레이어 - 캐릭터와 악세사리 */}
       <Layer>
         {/* 캐릭터 */}

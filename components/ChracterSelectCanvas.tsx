@@ -11,14 +11,7 @@ import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
 import { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-
-// 말풍선 상수
-const SPEECH_BUBBLE_CONFIG = {
-  X_RATIO: 0.73,
-  Y_RATIO: 0.1,
-  WIDTH: 80,
-  HEIGHT: 40,
-} as const;
+import { CANVAS_CHARACTER_RATIO, CANVAS_MAX_SIZE, SPEECH_BUBBLE_FONT_SIZE, SPEECH_BUBBLE_HEIGHT, SPEECH_BUBBLE_WIDTH, SPEECH_BUBBLE_X_RATIO, SPEECH_BUBBLE_Y_RATIO } from '@/util/canvasConfig';
 
 interface Props {
   mode: EditorMode;
@@ -29,10 +22,6 @@ interface Props {
 
 export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Props) {
   const router = useRouter();
-  //상수
-  const MAX_SIZE = 300;
-  const CHARACTER_RATIO = 1.5;
-
   //스토어 관련
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
   const accessories = useCharacterStore((s) => s.parts.accessories);
@@ -60,8 +49,8 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
 
   //반응형 스테이지 사이즈 계산
   const containerRef = useRef<HTMLDivElement>(null);
-  const [stageSize, setStageSize] = useState(MAX_SIZE);
-  const characterSize = stageSize * CHARACTER_RATIO;
+  const [stageSize, setStageSize] = useState(CANVAS_MAX_SIZE);
+  const characterSize = stageSize * CANVAS_CHARACTER_RATIO;
   const offset = (stageSize - characterSize) / 2;
 
   // 탭 관련
@@ -112,7 +101,7 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
     function resize() {
       if (!containerRef.current) return;
       const width = containerRef.current.offsetWidth;
-      setStageSize(Math.min(width, MAX_SIZE));
+      setStageSize(Math.min(width, CANVAS_MAX_SIZE));
     }
 
     resize();
@@ -236,20 +225,20 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
                   <KonvaImage
                     listening={false}
                     image={speechBubbleImage}
-                    x={stageSize * SPEECH_BUBBLE_CONFIG.X_RATIO}
-                    y={stageSize * SPEECH_BUBBLE_CONFIG.Y_RATIO}
-                    width={SPEECH_BUBBLE_CONFIG.WIDTH}
-                    height={SPEECH_BUBBLE_CONFIG.HEIGHT}
+                    x={stageSize * SPEECH_BUBBLE_X_RATIO}
+                    y={stageSize * SPEECH_BUBBLE_Y_RATIO}
+                    width={SPEECH_BUBBLE_WIDTH}
+                    height={SPEECH_BUBBLE_HEIGHT}
                   />
                   <Text
                     text={speechBubbleText}
-                    x={stageSize * SPEECH_BUBBLE_CONFIG.X_RATIO}
-                    y={stageSize * SPEECH_BUBBLE_CONFIG.Y_RATIO}
-                    width={SPEECH_BUBBLE_CONFIG.WIDTH}
-                    height={SPEECH_BUBBLE_CONFIG.HEIGHT}
+                    x={stageSize * SPEECH_BUBBLE_X_RATIO}
+                    y={stageSize * SPEECH_BUBBLE_Y_RATIO}
+                    width={SPEECH_BUBBLE_WIDTH}
+                    height={SPEECH_BUBBLE_HEIGHT}
                     align="center"
                     verticalAlign="middle"
-                    fontSize={16}
+                    fontSize={SPEECH_BUBBLE_FONT_SIZE}
                     fontFamily="Jua"
                     fill="#333"
                     listening={false}
