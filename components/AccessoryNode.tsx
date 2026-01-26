@@ -42,6 +42,7 @@ export function AccessoryNode({
       offsetY={img ? img.height / 2 : 0}
       scaleX={acce.scale}
       scaleY={acce.scale}
+      rotation={acce.rotation || 0}
       draggable
       onClick={onSelect}
       onTap={onSelect}
@@ -56,6 +57,7 @@ export function AccessoryNode({
         if (!node) return;
 
         const scale = node.scaleX();
+        const rotation = node.rotation();
 
         node.scaleX(1);
         node.scaleY(1);
@@ -64,6 +66,7 @@ export function AccessoryNode({
           x: node.x(),
           y: node.y(),
           scale,
+          rotation,
         });
       }}
     />

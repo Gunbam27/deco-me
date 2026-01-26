@@ -23,6 +23,7 @@ export type Accessory = {
   x: number;
   y: number;
   scale: number;
+  rotation?: number;
 };
 
 export const ANIMALS = [

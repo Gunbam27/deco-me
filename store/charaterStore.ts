@@ -43,6 +43,7 @@ export const useCharacterStore = create<CharacterState>((set) => ({
               y: 130,
               width: 50,
               scale: 1,
+              rotation: 0,
             },
           ],
         },
