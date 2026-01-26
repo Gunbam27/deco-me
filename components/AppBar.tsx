@@ -47,7 +47,7 @@ export function AppBar() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyLink}
-              className="text-sm font-medium px-3 py-1.5 rounded-full
+              className="text-sm font-medium px-2 py-1.5 rounded-full
                 bg-white text-brown-500 shadow hover:bg-pink-50 transition"
             >
               🔗 친구에게 부탁하기

@@ -36,7 +36,7 @@ export function CharacterCard({
         </button>
       )}
     <div className="pointer-events-none touch-pan-y">
-      <CharacterPreviewCanvas parts={parts} size={120} />
+      <CharacterPreviewCanvas parts={parts} />
     </div>
       {/* 만든 사람 표시 */}
       <div className="flex-1">

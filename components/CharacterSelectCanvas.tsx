@@ -1,17 +1,17 @@
 'use client';
 import { ACCESSORY, ANIMALS } from '@/types/character';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { ThumbnailSlider } from './ThumbnailSlider';
 import { useCharacterStore } from '@/store/charaterStore';
 import Image from 'next/image';
-import { Stage, Layer, Image as KonvaImage, Text, Transformer } from 'react-konva';
+import { Image as KonvaImage, Transformer } from 'react-konva';
 import { AccessoryNode } from './AccessoryNode';
-import useImage from 'use-image';
 import { EditorMode } from '@/types/editormode';
 import { createCharacter } from '@/service/charactersApi';
 import { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-import { CANVAS_CHARACTER_RATIO, CANVAS_MAX_SIZE, SPEECH_BUBBLE_FONT_SIZE, SPEECH_BUBBLE_HEIGHT, SPEECH_BUBBLE_WIDTH, SPEECH_BUBBLE_X_RATIO, SPEECH_BUBBLE_Y_RATIO } from '@/util/canvasConfig';
+import { CANVAS_CHARACTER_RATIO } from '@/util/canvasConfig';
+import { CharacterCanvas } from './canvas/CharacterCanvas';
 
 interface Props {
   mode: EditorMode;
@@ -20,7 +20,7 @@ interface Props {
   session: Session;
 }
 
-export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Props) {
+export function CharacterSelectCanvas({ mode, ownerId, ownerName, session }: Props) {
   const router = useRouter();
   //스토어 관련
   const selectedAnimal = useCharacterStore((s) => s.parts.animal);
@@ -37,8 +37,6 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
   const [selectedTab, setSelectedTab] = useState(0);
 
   const animal = ANIMALS.find((a) => a.type === selectedAnimal);
-  const [animalImage] = useImage(animal?.src || '');
-  const [speechBubbleImage] = useImage('/speech-bubble.svg');
 
   const transformerRef = useRef<any>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -47,12 +45,8 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
   const [speechBubbleModalOpen, setSpeechBubbleModalOpen] = useState(false);
   const [speechBubbleText, setSpeechBubbleText] = useState('');
 
-  //반응형 스테이지 사이즈 계산
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [stageSize, setStageSize] = useState(CANVAS_MAX_SIZE);
-  const characterSize = stageSize * CANVAS_CHARACTER_RATIO;
-  const offset = (stageSize - characterSize) / 2;
-
+  // 고정 사이즈 300x300 (CharacterCanvas 내부에서 처리됨)
+  
   // 탭 관련
   function onClickTab(selectedTab: number) {
     setSelectedTab(selectedTab);
@@ -96,19 +90,6 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
     }
   }
 
-  // 리사이징 관련
-  useEffect(() => {
-    function resize() {
-      if (!containerRef.current) return;
-      const width = containerRef.current.offsetWidth;
-      setStageSize(Math.min(width, CANVAS_MAX_SIZE));
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
-  }, []);
-
   return (
     <section className="mx-auto max-w-[480px] p-1 space-y-4">
       {/* 저장 완료 모달 */}
@@ -144,11 +125,11 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
       )}
 
       {/* Canvas Card */}
-      <div ref={containerRef} className="w-full flex justify-center">
+      <div className="w-full flex justify-center">
         <div className="bg-white rounded-2xl shadow-lg touch-none">
-          <Stage
-            width={stageSize}
-            height={stageSize}
+          <CharacterCanvas
+            animalSrc={animal?.src}
+            speechBubbleText={speechBubbleText}
             onMouseDown={(e) => {
               const target = e.target;
 
@@ -177,76 +158,33 @@ export function ChracterSelectCanvas({ mode, ownerId, ownerName, session }: Prop
                 transformerRef.current?.nodes([]);
               }
             }}
-            style={{ touchAction: 'none' }} // 모바일 바운딩 박스 터치안되는 문제
           >
-            {/* 메인 레이어 - 동물, 악세사리, 트랜스포머 */}
-            <Layer>
-              {animalImage && (
-                <KonvaImage
-                  listening={false}
-                  image={animalImage}
-                  x={offset}
-                  y={offset}
-                  width={characterSize}
-                  height={characterSize}
-                />
-              )}
-              {accessories.map((acce) => (
-                <AccessoryNode
-                  key={acce.id}
-                  acce={acce}
-                  isSelected={acce.id === selectedId}
-                  onSelect={() => setSelectedId(acce.id)}
-                  onChange={(attrs) => updateAccessory(acce.id, attrs)}
-                  transformerRef={transformerRef}
-                />
-              ))}
-              <Transformer
-                name="transformer"
-                ref={transformerRef}
-                rotateEnabled={true}
-                enabledAnchors={[
-                  'top-left',
-                  'top-right',
-                  'bottom-left',
-                  'bottom-right',
-                ]}
-                anchorSize={26} // ⭐ 핵심
-                anchorCornerRadius={13}
-                borderStroke="rgba(0,0,0,0.5)"
-                borderStrokeWidth={2}
+            {accessories.map((acce) => (
+              <AccessoryNode
+                key={acce.id}
+                acce={acce}
+                isSelected={acce.id === selectedId}
+                onSelect={() => setSelectedId(acce.id)}
+                onChange={(attrs) => updateAccessory(acce.id, attrs)}
+                transformerRef={transformerRef}
               />
-            </Layer>
-
-            {/* 말풍선 레이어 - 항상 맨 위에 렌더링 */}
-            <Layer>
-              {speechBubbleText && speechBubbleImage && (
-                <>
-                  <KonvaImage
-                    listening={false}
-                    image={speechBubbleImage}
-                    x={stageSize * SPEECH_BUBBLE_X_RATIO}
-                    y={stageSize * SPEECH_BUBBLE_Y_RATIO}
-                    width={SPEECH_BUBBLE_WIDTH}
-                    height={SPEECH_BUBBLE_HEIGHT}
-                  />
-                  <Text
-                    text={speechBubbleText}
-                    x={stageSize * SPEECH_BUBBLE_X_RATIO}
-                    y={stageSize * SPEECH_BUBBLE_Y_RATIO}
-                    width={SPEECH_BUBBLE_WIDTH}
-                    height={SPEECH_BUBBLE_HEIGHT-4}
-                    align="center"
-                    verticalAlign="middle"
-                    fontSize={SPEECH_BUBBLE_FONT_SIZE}
-                    fontFamily="Jua"
-                    fill="#333"
-                    listening={false}
-                  />
-                </>
-              )}
-            </Layer>
-          </Stage>
+            ))}
+            <Transformer
+              name="transformer"
+              ref={transformerRef}
+              rotateEnabled={true}
+              enabledAnchors={[
+                'top-left',
+                'top-right',
+                'bottom-left',
+                'bottom-right',
+              ]}
+              anchorSize={26} // ⭐ 핵심
+              anchorCornerRadius={13}
+              borderStroke="rgba(0,0,0,0.5)"
+              borderStrokeWidth={2}
+            />
+          </CharacterCanvas>
         </div>
       </div>
       <div className="flex bg-pink-100 rounded-full p-1 shadow-lg">

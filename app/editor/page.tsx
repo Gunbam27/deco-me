@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { EditorMode } from '@/types/editormode';
 import { EditorHeader } from '@/components/EditorHeader';
-import { ChracterSelectCanvas } from '@/components/ChracterSelectCanvas';
+import { CharacterSelectCanvas } from '@/components/CharacterSelectCanvas';
 
 function EditorContent() {
   const searchParams = useSearchParams();
@@ -63,7 +63,7 @@ function EditorContent() {
   return (
     <>
       <EditorHeader mode={mode} ownerName={ownerName} />
-      <ChracterSelectCanvas
+      <CharacterSelectCanvas
         mode={mode}
         ownerId={ownerId}
         ownerName={ownerName}
