@@ -1,4 +1,4 @@
-## deco-me
+# deco-me
 
 친구가 생각하는 나를 캐릭터로 만들어주는 참여형 웹 서비스
 
@@ -11,53 +11,36 @@
 **“친구가 생각하는 나”**를 캐릭터로 만들어주는 참여형 캐릭터 꾸미기 웹 서비스입니다.
 
 별도의 앱 설치 없이 웹에서 바로 참여 가능하며,  
-카카오톡 공유를 통해 자연스럽게 친구 참여를 유도하는 것을 목표로 합니다.
+쉽게 캐릭터를 만들고 이미지로 저장하여 공유할 수 있습니다.
 
 ---
 
 ## ✨ 주요 기능
 
-### 1. 캐릭터 꾸미기 (공통 Editor)
+### 1. 캐릭터 꾸미기 (Editor)
 
-- 얼굴, 머리, 눈, 입 등 파츠 기반 캐릭터 커스터마이징
-- 상태 변경 시 즉시 미리보기 반영
-- 하나의 `CharacterEditor` 컴포넌트로 모드 분기 처리
+- **Canvas 기반 렌더링**: `react-konva`를 사용하여 부드러운 캐릭터 조작 경험 제공
+- **커스터마이징**:
+  - 동물 캐릭터 선택 (카피바라, 고양이, 병아리 등)
+  - 다양한 액세서리 추가, 이동, 크기 조절, 회전
+  - 말풍선 텍스트 입력
+- **모드 구분**:
   - `self` : 내가 나를 꾸미는 모드
   - `friend` : 친구가 나를 꾸미는 모드
-  - `readonly` : 결과 확인 전용 모드
 
----
+### 2. 내 옷장 (Closet)
 
-### 2. 캐릭터 저장 (Serverless)
-
-- Supabase PostgreSQL 기반 캐릭터 데이터 저장
-- 캐릭터 파츠 상태를 JSON 형태로 관리
-- Row Level Security(RLS) 설정을 통한 접근 제어
-
----
+- **캐릭터 보관함**:
+  - 내가 만든 캐릭터와 친구들이 선물해준 캐릭터 분리 조회
+- **이미지 저장**:
+  - `html2canvas`를 통해 완성된 캐릭터 카드를 이미지로 다운로드
+- **관리 기능**:
+  - 마음에 들지 않는 캐릭터 삭제 (Soft Delete)
 
 ### 3. 친구 초대 & 공유
 
-- 캐릭터 생성 시 고유 초대 링크 생성
-- 링크를 통해 로그인 없이 참여 가능
-- (추후) 카카오톡 공유 연동 예정
-
----
-
-### 4. 친구 응답 캐릭터 생성
-
-- 초대 링크(`/invite/[id]`)를 통해 접속
-- 기존 캐릭터를 기반으로 새로운 캐릭터 생성
-- `owner_id`는 동일, `created_by`로 응답자 구분
-- “친구들이 꾸며준 나” 데이터로 저장
-
----
-
-### 5. 결과 페이지
-
-- 내가 만든 캐릭터 + 친구들이 만들어준 캐릭터 목록 표시
-- 카드 형태 UI로 여러 응답을 한 화면에서 확인
-- `/result/[id]` 라우트에서 조회
+- 캐릭터 생성 시 고유 초대 링크 생성 (`/editor?owner={id}`)
+- 링크를 통해 로그인 없이도(또는 간편 로그인 후) 친구 꾸며주기 참여 가능
 
 ---
 
@@ -65,52 +48,57 @@
 
 ### Frontend
 
-- Next.js (App Router)
-- React
-- Tailwind CSS
-- Zustand (Client State 관리)
-- Canvas (추후 캐릭터 렌더링 예정)
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Graphics**: Konva.js (react-konva)
+- **Util**: html2canvas (이미지 저장)
 
 ### Backend (Serverless)
 
-- Supabase
-  - Database (PostgreSQL)
-  - Auth (추후 Kakao OAuth 연동 예정)
-  - Storage (추후 이미지 저장)
+- **Supabase**
+  - **Database**: PostgreSQL
+  - **Auth**: Kakao Social Login
 
 ---
 
-## 🧠 상태 관리 전략
+## 🧠 아키텍처 및 상태 관리
 
-- **Client State**
-  - 캐릭터 편집 중 파츠 상태 → Zustand
-- **Server State**
-  - DB에서 불러오는 캐릭터 목록 → `useState + useEffect`
-  - (추후 React Query 도입 가능)
+- **Canvas Architecture**:
+  - `CharacterCanvas`: 공통 캔버스 로직 (뷰어/에디터 공용)
+  - `AccessoryNode`: 조작 가능한 액세서리 객체 (Transformer 연결)
+  - 고정된 캔버스 비율(300x300)로 일관된 사용자 경험 제공
+
+- **State Management (Zustand)**:
+  - `useCharacterStore`: 캐릭터 파츠(동물, 액세서리 위치/속성) 상태 관리
+  - `useAuthStore`: 유저 세션 관리
 
 ---
 
-## 🧱 데이터 구조 (현재 기준)
+## 🧱 데이터 구조
 
 ```sql
 create table characters (
   id uuid primary key default gen_random_uuid(),
-  owner_id text not null,
-  created_by text not null,
-  is_self boolean default false,
-  parts jsonb not null,
+  owner_id text not null,      -- 캐릭터 주인의 ID
+  created_by text not null,    -- 캐릭터를 만든 사람(본인 or 친구)의 ID
+  created_by_name text,        -- 만든 사람 닉네임
+  is_self boolean default false, -- 본인이 만들었는지 여부
+  parts jsonb not null,        -- 캐릭터 파츠 데이터 (JSON)
+  deleted_at timestamp with time zone -- Soft Delete
   created_at timestamp with time zone default now()
 );
+```
 
 ---
 
-## 🎯 프로젝트 목표
-
-- 프론트엔드 개발자로서 서버리스 환경에서의 서비스 설계 경험
-- Client State / Server State 분리 설계 이해
-- 공유 기반 UX 및 사용자 참여 플로우 구현
-
 ## 🚀 Getting Started
+
+```bash
+# 의존성 설치
 npm install
+
+# 개발 서버 실행
 npm run dev
 ```
