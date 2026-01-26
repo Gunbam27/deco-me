@@ -2,6 +2,10 @@
 
 친구가 생각하는 나를 캐릭터로 만들어주는 참여형 웹 서비스
 
+<p align="center">
+  <img src="./public/preview.png" width="400" height="550"/>
+  <img src="./public/preview2.png" width="400" height="550"/>
+</p>
 ---
 
 ## 📌 프로젝트 소개
